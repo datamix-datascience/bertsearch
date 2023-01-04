@@ -3,8 +3,11 @@ Example script to create elasticsearch index.
 """
 import argparse
 
-from elasticsearch import Elasticsearch
+import base64
+base64.encodestring = base64.encodebytes
+base64.decodestring = base64.decodebytes
 
+from elasticsearch import Elasticsearch
 
 def main(args):
     client = Elasticsearch()

@@ -1,5 +1,6 @@
 import os
 from pprint import pprint
+from markupsafe import escape
 
 from flask import Flask, render_template, jsonify, request
 from elasticsearch import Elasticsearch
@@ -46,4 +47,4 @@ def analyzer():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=3000)

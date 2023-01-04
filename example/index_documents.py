@@ -4,6 +4,10 @@ Example script to index elasticsearch documents.
 import argparse
 import json
 
+import base64
+base64.encodestring = base64.encodebytes
+base64.decodestring = base64.decodebytes
+
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
 
