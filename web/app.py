@@ -2,11 +2,17 @@ import os
 from pprint import pprint
 from markupsafe import escape
 
+from dotenv import load_dotenv
+load_dotenv()
+
+import os
+INDEX_NAME = os.getenv('INDEX_NAME')
+
 from flask import Flask, render_template, jsonify, request
 from elasticsearch import Elasticsearch
 from bert_serving.client import BertClient
 SEARCH_SIZE = 10
-INDEX_NAME = os.environ['INDEX_NAME']
+# INDEX_NAME = os.environ['INDEX_NAME']
 app = Flask(__name__)
 
 
@@ -27,7 +33,7 @@ def analyzer():
         "script_score": {
             "query": {"match_all": {}},
             "script": {
-                "source": "cosineSimilarity(params.query_vector, doc['text_vector']) + 1.0",
+                "source": "cosineSimilarity(params.query_vector, doc['thema_vector']) + 1.0",
                 "params": {"query_vector": query_vector}
             }
         }
@@ -38,7 +44,7 @@ def analyzer():
         body={
             "size": SEARCH_SIZE,
             "query": script_query,
-            "_source": {"includes": ["title", "text"]}
+            "_source": {"includes": ["thema", "student_name", "link"]}
         }
     )
     print(query)

@@ -1,0 +1,47 @@
+{
+  "settings": {
+    "number_of_shards": 2,
+    "number_of_replicas": 1
+  },
+  "mappings": {
+    "dynamic": "true",
+    "_source": {
+      "enabled": "true"
+    },
+    "properties": {
+      "student_name": {
+        "type": "text"
+      },
+      "kana": {
+        "type": "text"
+      },
+      "term": {
+        "type": "text"
+      },
+      "thema": {
+        "type": "text"
+      },
+      "link": {
+        "type": "text",
+        "index": false
+      },
+      "Release": {
+        "type": "text"
+      },
+      "score": {
+        "type": "float"
+      },
+      "comments": {
+        "type": "text"
+      },
+      "thema_vector": {
+        "type": "dense_vector",
+        "dims": 768
+      },
+      "comments_vector": {
+        "type": "dense_vector",
+        "dims": 768
+      }
+    }
+  }
+}
