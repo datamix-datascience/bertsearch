@@ -34,11 +34,10 @@
       "comments": {
         "type": "text"
       },
-      "thema_vector": {
-        "type": "dense_vector",
-        "dims": 768
+      "doc_text": {
+        "type": "text"
       },
-      "comments_vector": {
+      "documents_vector": {
         "type": "dense_vector",
         "dims": 768
       }

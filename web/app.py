@@ -30,12 +30,18 @@ def analyzer():
     query_vector = bc.encode([query])[0]
 
     script_query = {
-        "script_score": {
-            "query": {"match_all": {}},
-            "script": {
-                "source": "cosineSimilarity(params.query_vector, doc['thema_vector']) + 1.0",
-                "params": {"query_vector": query_vector}
+        "query": {
+            "function_score": {
+                "query": {
+                    "match": { "message": query }
+                }
             }
+            # "script_score": {
+            #     "script": {
+            #         "source": "cosineSimilarity(params.query_vector, doc['documents_vector']) + 1.0",
+            #         "params": {"query_vector": query_vector}
+            #     }
+            # }
         }
     }
 

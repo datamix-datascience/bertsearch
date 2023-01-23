@@ -21,7 +21,8 @@ def create_document(doc, emb, index_name):
         'Release': doc['Release'],
         'score': doc['score'],
         'comments': doc['comments'],
-        'thema_vector': emb
+        'doc_text': doc['doc_text'],
+        'documents_vector': emb
     }
 
 
@@ -38,7 +39,8 @@ def load_dataset(path):
             'link': series.link,
             'Release': series.Release,
             'score': series.score,
-            'comments': series.comments
+            'comments': series.comments,
+            'doc_text': series.thema + series.doc_text
         }
         docs.append(doc)
     return docs
@@ -48,7 +50,7 @@ def bulk_predict(docs, batch_size=256):
     """Predict bert embeddings."""
     for i in range(0, len(docs), batch_size):
         batch_docs = docs[i: i+batch_size]
-        embeddings = bc.encode([doc['thema'] for doc in batch_docs])
+        embeddings = bc.encode([doc['doc_text'] for doc in batch_docs])
         for emb in embeddings:
             yield emb
 
