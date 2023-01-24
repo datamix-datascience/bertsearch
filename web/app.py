@@ -33,7 +33,7 @@ def analyzer():
         "query": {
             "function_score": {
                 "query": {
-                    "match": { "message": query }
+                    "match": { "comments": query }
                 }
             }
             # "script_score": {
