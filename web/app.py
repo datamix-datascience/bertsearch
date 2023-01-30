@@ -30,19 +30,26 @@ def analyzer():
     query_vector = bc.encode([query])[0]
 
     script_query = {
-        "query": {
-            "function_score": {
-                "query": {
-                    "match": { "comments": query }
-                }
+        "script_score": {
+            "query": {"match_all": {}},
+            "script": {
+                "source": "cosineSimilarity(params.query_vector, doc['documents_vector']) + 1.0",
+                "params": {"query_vector": query_vector}
             }
-            # "script_score": {
-            #     "script": {
-            #         "source": "cosineSimilarity(params.query_vector, doc['documents_vector']) + 1.0",
-            #         "params": {"query_vector": query_vector}
-            #     }
-            # }
         }
+        # "query": {
+        #     "function_score": {
+        #         "query": {
+        #             "match": { "thema": query }
+        #         }
+        #     },
+        #     "script_score": {
+        #         "script": {
+        #             "source": "cosineSimilarity(params.query_vector, doc['documents_vector']) + 1.0",
+        #             "params": {"query_vector": query_vector}
+        #         }
+        #     }
+        # }
     }
 
     response = client.search(

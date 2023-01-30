@@ -26,16 +26,18 @@
         "index": false
       },
       "Release": {
-        "type": "text"
+        "type": "text",
+        "index": false
       },
       "score": {
-        "type": "float"
+        "type": "float",
+        "index": false
       },
       "comments": {
         "type": "text"
       },
-      "doc_text": {
-        "type": "text"
+      "pre_text": {
+        "type": "nested"
       },
       "documents_vector": {
         "type": "dense_vector",

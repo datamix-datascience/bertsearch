@@ -5,11 +5,12 @@ import argparse
 import json
 
 import pandas as pd
+import ast
 from bert_serving.client import BertClient
 bc = BertClient(output_fmt='list')
 
 
-def create_document(doc, emb, index_name):
+def create_document(doc, index_name):
     return {
         '_op_type': 'index',
         '_index': index_name,
@@ -21,14 +22,15 @@ def create_document(doc, emb, index_name):
         'Release': doc['Release'],
         'score': doc['score'],
         'comments': doc['comments'],
-        'doc_text': doc['doc_text'],
-        'documents_vector': emb
+        'pre_text': doc['pre_list'],
+        'documents_vector': doc['emb']
     }
 
 
 def load_dataset(path):
     docs = []
     df = pd.read_csv(path)
+    df["pre_list"] = df["pre_text"].apply(lambda x: ast.literal_eval(x))
     for row in df.iterrows():
         series = row[1]
         doc = {
@@ -40,27 +42,43 @@ def load_dataset(path):
             'Release': series.Release,
             'score': series.score,
             'comments': series.comments,
-            'doc_text': series.thema + series.doc_text
+            'pre_text': series.pre_list
         }
         docs.append(doc)
-    return docs
-
+    return df # docs
 
 def bulk_predict(docs, batch_size=256):
     """Predict bert embeddings."""
     for i in range(0, len(docs), batch_size):
+        print(len(docs))
+        print("index : " + str(i))
         batch_docs = docs[i: i+batch_size]
-        embeddings = bc.encode([doc['doc_text'] for doc in batch_docs])
-        for emb in embeddings:
-            yield emb
-
+        print("batch_docs : " + batch_docs[i])
+        print("batch_docs_len : " + str(len(batch_docs)))
+        return bc.encode(batch_docs)
 
 def main(args):
     docs = load_dataset(args.data)
     with open(args.save, 'w') as f:
-        for doc, emb in zip(docs, bulk_predict(docs)):
-            d = create_document(doc, emb, args.index_name)
-            f.write(json.dumps(d) + '\n')
+        docs["emb"] = docs["pre_list"].apply(bulk_predict)
+        d = create_document(docs, args.index_name)
+        f.write(json.dumps(d) + '\n')
+
+# def bulk_predict(docs, batch_size=256):
+#     """Predict bert embeddings."""
+#     for i in range(0, len(docs), batch_size):
+#         batch_docs = docs[i: i+batch_size]
+#         embeddings = bc.encode([doc['pre_text'] for doc in batch_docs],is_tokenized=True)
+#         for emb in embeddings:
+#             yield emb
+
+
+# def main(args):
+#     docs = load_dataset(args.data)
+#     with open(args.save, 'w') as f:
+#         for doc, emb in zip(docs, bulk_predict(docs)):
+#             d = create_document(doc, emb, args.index_name)
+#             f.write(json.dumps(d) + '\n')
 
 
 if __name__ == '__main__':
